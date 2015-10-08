@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 
+# Этот скрипт необходимо выполнять во всех иерархических таблицах-наследниках
+# путем добавления в миграции вашего приложения migrations.RunSQL()
+# Пример в myapp/migranions/0001_initial.py
 POSTGRESQL_CONNECT_TABLE = '''-- тестировал в БД PostgreSQL 9.1 и выше
 
 -- Добавляем поле-массив которое хранит "дырки"
@@ -92,7 +95,7 @@ class Tree32Abstract(TreeAbstract):
     LEVELS = 5
     CHILDREN = 83
 
-    # id корня дерева
+    # id корня дерева 5/83
     ROOT_ID = -2147483648
 
     id = models.IntegerField(primary_key=True)
@@ -114,7 +117,7 @@ class Tree64Abstract(TreeAbstract):
     LEVELS = 6
     CHILDREN = 1624
 
-    # id корня дерева
+    # id корня дерева 6/1624
     ROOT_ID = -9223372036854775808
 
     id = models.BigIntegerField(primary_key=True)
