@@ -1,0 +1,147 @@
+# coding: utf-8
+# скрипт python2
+# Позволяет подобрать размерность дерева и узнать начальный элемент
+
+from Tkinter import *
+
+def PrintInt():
+    global intMin
+    global intMax
+
+    if vSign.get():
+        intMin = -2**(vSize.get()-1)
+        intMax = 2**(vSize.get()-1)-1
+    else:
+        intMin = 0
+        intMax = 2**vSize.get()-1
+
+    lbStartEnd['text']="%d и %d" % (intMin, intMax)
+    CalcCh(0)
+
+
+def CalcCh(event):
+    global intMin
+    global intMax
+
+    CountLevel = int(eLvl.get())
+    CountChilds = int((2**vSize.get())**(1.0/(1.0*CountLevel))-1)
+    print '---------------------------------------'
+    lbCh['text'] = "x   %d - Количество детей" % (CountChilds)
+    print lbCh['text'][4:]
+    print
+    lbIdParent['text'] = "id Корня = %d" % (intMin)
+    print lbIdParent['text']
+    print
+    # макс id первого уровня
+    # ((power((ch+1),(lv-lv_p-1)))*(count_childs_p+1))::bigint+id_p;
+    lb1Id1lvl['text'] = "id ребенка №1 первого уровня = %d"%\
+                          ((((CountChilds+1)**(CountLevel-1))*(1)+intMin))
+    print lb1Id1lvl['text']
+    lbMaxId1lvl['text'] = "id ребенка №%d первого уровня = %d"%\
+                          (CountChilds, (((CountChilds+1)**(CountLevel-1))*(CountChilds)+intMin))
+    print lbMaxId1lvl['text']
+    print 'Шаг первого уровня: ',((CountChilds+1)**(CountLevel-1))
+    summ = 0
+    print
+    for x in range(2,CountLevel):
+        poter = ((CountChilds+1)**(CountLevel-x))-1
+        poter_u = poter*(CountChilds**(x-1))
+        summ = summ + poter_u
+        print 'Количество неиспользуемых элементов между %d и %d уp. (в скобках потери из-за них): %d (%d)'% (x-1, x, poter, poter_u)
+    print
+    all_d = ((CountChilds+1)**(CountLevel-1))*CountChilds
+    print '1. Количество значений, за минусом root элемента и его детей: %d (это взято за 100%%)'%(all_d)
+    print '2. Неиспользуемые значения (сумма потерь между уровнями), всего: %d (примерно %d%%)'% (summ, ((summ*1.0)/(all_d*1.0))*100)
+    print 'Количество возможных  элементов в дереве (разница между предыдущими пп. 1 и 2):',all_d-summ
+
+
+root = Tk()
+
+frInt = Frame(root)
+frInt.pack(padx=5, pady=5,fill=X)
+
+# Виджеты для выбора размера int
+vSize = IntVar()
+vSize.set(64)
+
+size = [
+    ("int64 (bigint)",64),
+    ("int32 (integer)",32),
+    ("int16 (smallint)",16),
+    ("int8 (byte)",8),
+]
+
+lfrSize = LabelFrame(frInt, text=u" Размер int ")
+lfrSize.pack(padx=5, pady=5, side=LEFT)
+
+for txt, val in size:
+    Radiobutton(lfrSize,
+                text=txt,
+                padx = 5,
+                variable=vSize,
+                command=PrintInt,
+                value=val).pack(anchor=W)
+
+# Виджеты для выбора unsigned или нет
+vSign = IntVar()
+vSign.set(1)
+
+sign = [
+    ("С отрицательными значениями",1),
+    ("Без знака",0),
+]
+
+lfrSign = LabelFrame(frInt, text=u" Тип int ")
+lfrSign.pack(padx=5, pady=5,fill=X, side=TOP)
+
+for txt, val in sign:
+    Radiobutton(lfrSign,
+                text=txt,
+                padx = 5,
+                variable=vSign,
+                command=PrintInt,
+                value=val).pack(anchor=W)
+
+intMin = -2**(64-1)
+intMax = 2**(64-1)-1
+
+lfrIntRes = LabelFrame(root, text=u" Min и Max допустимые значения ")
+lfrIntRes.pack(padx=10, pady=5,fill=X)
+
+lbStartEnd = Label(lfrIntRes, text="%d и %d" % (intMin,intMax))
+lbStartEnd.pack(padx=5, pady=5, side=LEFT)
+
+lfrLlvCh = LabelFrame(root, text="Размерность дерева")
+lfrLlvCh.pack(padx=10, pady=5,fill=X)
+
+frLlvCh = Frame(lfrLlvCh)
+frLlvCh.pack(padx=0, pady=0,fill=X, side=TOP)
+
+Label(frLlvCh, text="Количество уровней:").pack(padx=5, pady=5, side=LEFT)
+eLvl = Entry(frLlvCh, width=4)
+eLvl.pack(padx=0, pady=5, side=LEFT)
+eLvl.insert(3,"3")
+eLvl.bind('<Return>', CalcCh)
+
+lbCh = Label(frLlvCh)
+lbCh.pack(padx=0, pady=5, side=LEFT)
+
+frCheck = Frame(lfrLlvCh)
+frCheck.pack(padx=0, pady=0,fill=X, side=TOP)
+
+lbIdParent = Label(frCheck, text = "id Вершины = %d"%(intMin))
+lbIdParent.pack(padx=5, pady=5, side=TOP)
+
+lb1Id1lvl = Label(frCheck)
+lb1Id1lvl.pack(padx=5, pady=5, side=TOP)
+
+lbMaxId1lvl = Label(frCheck)
+lbMaxId1lvl.pack(padx=5, pady=5, side=TOP)
+
+
+
+CalcCh(0)
+
+
+
+mainloop()
