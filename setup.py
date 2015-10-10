@@ -24,7 +24,6 @@ setup(
         'Environment :: Web Environment',
         'Framework :: Django',
         'Intended Audience :: Developers',
-        'License :: BSD License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
 
