@@ -1,4 +1,4 @@
 include LICENSE
 include README.rst
-recursive-include treensl/docs *
+recursive-include docs *
 recursive-include treensl/sql_scripts *

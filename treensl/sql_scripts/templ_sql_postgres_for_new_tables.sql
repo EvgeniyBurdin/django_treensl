@@ -19,8 +19,11 @@ ALTER TABLE board_group ADD COLUMN holes bigint[];
 -- Создадим корневой элемент дерева
 -- Если в унаследованной таблице есть дополнительные поля NOT NULL,
 -- то добавьте их названия и значения в этот оператор
-INSERT INTO board_group (id, parent_id, lvl, created_children, removed_children, label_node)
-                 VALUES (-9223372036854775808, -9223372036854775808, 0, 0, 0, 'root');
+INSERT INTO board_group (id, parent_id, lvl, created_children, removed_children)
+              VALUES (-9223372036854775808, -9223372036854775808, 0, 0, 0);
+-- INSERT INTO board_group (id, parent_id, lvl, created_children, removed_children, label_node)
+--                 VALUES (-9223372036854775808, -9223372036854775808, 0, 0, 0, 'root');
+
 
 -- Запишем размерность созданной таблицы
 INSERT INTO tree_size (table_name name, number_of_levels, number_of_children)

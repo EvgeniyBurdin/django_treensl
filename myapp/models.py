@@ -13,8 +13,12 @@ class Group(Tree64Abstract):
     # ROOT_ID = -9223372036854775808
     # Посмотреть варианты размерности дерева и id начального элемента
     # можно с помощью программы docs/treensl_params.py
-    rem = models.CharField(max_length=100, blank=True)
+    name = models.CharField(max_length=100, blank=True)
+
+    @property
+    def name_for_admin(self):
+        return '{0}{1} ({2}) '.format('- ' * self.lvl, self.name, self.count_children)
 
     def __str__(self):
-        return '{0} (lvl={1})'.format(self.label_node, self.lvl)
+        return '{0} (lvl={1})'.format(self.name, self.lvl)
 

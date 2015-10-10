@@ -44,11 +44,6 @@ class TreeAbstract(models.Model):
     def count_children(self):
           return self.created_children - self.removed_children
 
-    # Отображение названия узла в админке
-    @property
-    def label_node_for_adminterface(self):
-        return '{0}{1} ({2}) '.format('- ' * self.lvl, self.label_node, self.count_children)
-
     class Meta:
         abstract = True
 
@@ -59,9 +54,10 @@ class TreeAbstract(models.Model):
         # Создадим списки полей абстрактой модели и их значений для первой строки (1-й элемент)
         # (1-й элемент в таблице, хранящей дерево, ссылается сам на себя)
         list_fields = ['id', 'parent_id', 'lvl', 'created_children',
-                       'removed_children', 'label_node']
-        list_values = [self.ROOT_ID, self.ROOT_ID, 0, 0, 0,'root']
-
+                       'removed_children']
+                       #'removed_children', 'label_node']
+        #list_values = [self.ROOT_ID, self.ROOT_ID, 0, 0, 0,'root']
+        list_values = [self.ROOT_ID, self.ROOT_ID, 0, 0, 0]
         # Наследник модели может иметь свои дополнительные поля, и они могут быть NOT NULL
         # Необходимо вставить начальный элемент дерева, с учетом этого
         # То есть, заполнить такие поля каким-либо значением
@@ -103,7 +99,7 @@ class Tree32Abstract(TreeAbstract):
     lvl = models.IntegerField(blank=False, null=False)
     created_children = models.IntegerField(blank=False, null=False)
     removed_children = models.IntegerField(blank=False, null=False)
-    label_node = models.CharField(max_length=100, blank=True)
+    #label_node = models.CharField(max_length=100, blank=True)
 
     class Meta:
         abstract = True
@@ -125,7 +121,7 @@ class Tree64Abstract(TreeAbstract):
     lvl = models.IntegerField(blank=False, null=False)
     created_children= models.BigIntegerField(blank=False, null=False)
     removed_children= models.BigIntegerField(blank=False, null=False)
-    label_node = models.CharField(max_length=100, blank=True)
+    #label_node = models.CharField(max_length=100, blank=True)
 
     class Meta:
         abstract = True

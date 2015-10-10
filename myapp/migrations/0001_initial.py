@@ -16,12 +16,11 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Group',
             fields=[
-                ('id', models.BigIntegerField(primary_key=True, serialize=False)),
+                ('id', models.BigIntegerField(serialize=False, primary_key=True)),
                 ('lvl', models.IntegerField()),
                 ('created_children', models.BigIntegerField()),
                 ('removed_children', models.BigIntegerField()),
-                ('label_node', models.CharField(blank=True, max_length=100)),
-                ('rem', models.CharField(blank=True, max_length=100)),
+                ('name', models.CharField(max_length=100, blank=True)),
                 ('parent', models.ForeignKey(to='myapp.Group')),
             ],
             options={
