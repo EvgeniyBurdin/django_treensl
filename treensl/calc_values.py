@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 def children_range (id, tree_lv, tree_ch):
     y = tree_ch+1
     lv = tree_lv
