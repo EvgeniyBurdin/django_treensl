@@ -42,7 +42,7 @@ class TreeAbstract(models.Model):
     # Количество детей
     @property
     def count_children(self):
-          return self.created_children - self.removed_children
+        return self.created_children - self.removed_children
 
     class Meta:
         abstract = True
@@ -55,7 +55,7 @@ class TreeAbstract(models.Model):
         # (1-й элемент в таблице, хранящей дерево, ссылается сам на себя)
         list_fields = ['id', 'parent_id', 'lvl', 'created_children',
                        'removed_children']
-                       #'removed_children', 'label_node']
+                    #'removed_children', 'label_node']
         #list_values = [self.ROOT_ID, self.ROOT_ID, 0, 0, 0,'root']
         list_values = [self.ROOT_ID, self.ROOT_ID, 0, 0, 0]
         # Наследник модели может иметь свои дополнительные поля, и они могут быть NOT NULL
