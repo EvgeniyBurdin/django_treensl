@@ -92,7 +92,7 @@ class Tree32Abstract(TreeAbstract):
     CHILDREN = 83
 
     # id корня дерева 5/83
-    ROOT_ID = -2147483648
+    ROOT_ID = -2091059712
 
     id = models.IntegerField(primary_key=True)
     parent = models.ForeignKey('self')
@@ -114,7 +114,7 @@ class Tree64Abstract(TreeAbstract):
     CHILDREN = 1624
 
     # id корня дерева 6/1624
-    ROOT_ID = -9223372036854775808
+    ROOT_ID = -9206407546997070313
 
     id = models.BigIntegerField(primary_key=True)
     parent = models.ForeignKey('self')
