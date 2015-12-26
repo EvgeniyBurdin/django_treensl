@@ -9,7 +9,7 @@ class GroupAdmin(admin.ModelAdmin):
 
     fieldsets = [
         ('Поля для "Групп"',
-         {'fields': ['parent', 'name', ]}),
+         {'fields': ['parent', 'namenode', ]}),
     ]
 
 admin.site.register(Group, GroupAdmin)
