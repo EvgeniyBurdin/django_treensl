@@ -174,8 +174,8 @@ BEGIN
 
 		-- Добавим в конец новую дырку
 		parent_holes := array_append(parent_holes,
-		                             id / ((ch + 1) ^ (lv - (lvl - 1) - 1))::bigint 
-                                    - parent_id / ((ch + 1) ^ (lv - (lvl - 1) - 1))::bigint);
+		                            (id / ((ch + 1) ^ (lv - (lvl - 1) - 1))::bigint
+                                    - parent_id / ((ch + 1) ^ (lv - (lvl - 1) - 1))::bigint)::integer);
 
 		-- Запишем новый массив дырок родителя и увеличим у него счетчик дырок
 		EXECUTE format('UPDATE %I SET removed_children = removed_children + 1, holes = $1 WHERE id = $2',
