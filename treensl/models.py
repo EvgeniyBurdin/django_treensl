@@ -7,7 +7,7 @@ from django.db import models
 POSTGRESQL_CONNECT_TABLE = '''-- тестировал в БД PostgreSQL 9.1 и выше
 
 -- Добавляем поле-массив которое хранит "дырки"
-ALTER TABLE  {0} ADD COLUMN holes bigint[];
+ALTER TABLE  {0} ADD COLUMN holes integer[];
 
 -- Начальный элемент дерева
 INSERT INTO {0} ({1}) VALUES {2};
@@ -38,6 +38,10 @@ CREATE TRIGGER before_new
 
 
 class TreeAbstract(models.Model):
+    
+    lvl = models.IntegerField(blank=False, null=False)
+    created_children = models.IntegerField(blank=False, null=False)
+    removed_children = models.IntegerField(blank=False, null=False)
 
     # Количество детей
     @property
@@ -68,13 +72,17 @@ class TreeAbstract(models.Model):
                 list_values.append(0)
 
         # Для 32 и 64 разрядных таблиц триггерные функции разные
-        size_int = '64'
-        if issubclass(self, Tree32Abstract):
-            size_int = '32'
+        #size_int = '64'
+        #if issubclass(self, Tree32Abstract):
+        #    size_int = '32'
 
-        p5 = 'tree'+size_int+'_after_upd_parent()'
-        p6 = 'tree'+size_int+'_before_del_row()'
-        p7 = 'tree'+size_int+'_before_new_id()'
+        #p5 = 'tree'+size_int+'_after_upd_parent()'
+        #p6 = 'tree'+size_int+'_before_del_row()'
+        #p7 = 'tree'+size_int+'_before_new_id()'
+        
+        p5 = 'treensl_after_upd()'
+        p6 = 'treensl_before_del()'
+        p7 = 'treensl_before_new()'
 
 
         return POSTGRESQL_CONNECT_TABLE.format(self._meta.db_table,     #Название таблицы-наследника в БД
@@ -96,11 +104,7 @@ class Tree32Abstract(TreeAbstract):
 
     id = models.IntegerField(primary_key=True)
     parent = models.ForeignKey('self')
-    lvl = models.IntegerField(blank=False, null=False)
-    created_children = models.IntegerField(blank=False, null=False)
-    removed_children = models.IntegerField(blank=False, null=False)
-    #label_node = models.CharField(max_length=100, blank=True)
-
+    
     class Meta:
         abstract = True
 
@@ -118,10 +122,6 @@ class Tree64Abstract(TreeAbstract):
 
     id = models.BigIntegerField(primary_key=True)
     parent = models.ForeignKey('self')
-    lvl = models.IntegerField(blank=False, null=False)
-    created_children= models.BigIntegerField(blank=False, null=False)
-    removed_children= models.BigIntegerField(blank=False, null=False)
-    #label_node = models.CharField(max_length=100, blank=True)
-
+    
     class Meta:
         abstract = True
