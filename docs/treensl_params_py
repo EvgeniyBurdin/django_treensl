@@ -22,23 +22,27 @@ def PrintInt():
 def CalcCh(event):
     global intMin
     global intMax
+    global idRoot
 
     CountLevel = int(eLvl.get())
     CountChilds = int((2**vSize.get())**(1.0/(1.0*CountLevel))-1)
+    #CountChilds = int((2**vSize.get())**(1.0/(1.0*CountLevel)))
     print '---------------------------------------'
     lbCh['text'] = "x   %d - Количество детей" % (CountChilds)
     print lbCh['text'][4:]
     print
-    lbIdParent['text'] = "id Корня = %d" % (intMin)
+    idRoot = -((CountChilds+1)**CountLevel)/2
+    idRoot *= vSign.get()
+    lbIdParent['text'] = "id Корня = %d" % (idRoot)
     print lbIdParent['text']
     print
     # макс id первого уровня
     # ((power((ch+1),(lv-lv_p-1)))*(count_childs_p+1))::bigint+id_p;
     lb1Id1lvl['text'] = "id ребенка №1 первого уровня = %d"%\
-                          ((((CountChilds+1)**(CountLevel-1))*(1)+intMin))
+                          ((((CountChilds+1)**(CountLevel-1))*(1)+idRoot))
     print lb1Id1lvl['text']
     lbMaxId1lvl['text'] = "id ребенка №%d первого уровня = %d"%\
-                          (CountChilds, (((CountChilds+1)**(CountLevel-1))*(CountChilds)+intMin))
+                          (CountChilds, (((CountChilds+1)**(CountLevel-1))*(CountChilds)+idRoot))
     print lbMaxId1lvl['text']
     print 'Шаг первого уровня: ',((CountChilds+1)**(CountLevel-1))
     summ = 0
@@ -104,6 +108,7 @@ for txt, val in sign:
 
 intMin = -2**(64-1)
 intMax = 2**(64-1)-1
+idRoot = 0
 
 lfrIntRes = LabelFrame(root, text=u" Min и Max допустимые значения ")
 lfrIntRes.pack(padx=10, pady=5,fill=X)
@@ -129,7 +134,7 @@ lbCh.pack(padx=0, pady=5, side=LEFT)
 frCheck = Frame(lfrLlvCh)
 frCheck.pack(padx=0, pady=0,fill=X, side=TOP)
 
-lbIdParent = Label(frCheck, text = "id Вершины = %d"%(intMin))
+lbIdParent = Label(frCheck, text = "id Вершины = %d"%(idRoot))
 lbIdParent.pack(padx=5, pady=5, side=TOP)
 
 lb1Id1lvl = Label(frCheck)
