@@ -180,9 +180,10 @@ BEGIN
 	-- Найдем максимально правого существующего ребенка у родителя
 	-- (здесь и далее "(lvl - 1)" - уровень родителя)
 	
-    max_id_for_parent := ((((ch + 1) ^ (lv - (lvl - 1) - 1))::bigint 
-                          * (old_p_ch - 1)) + parent_id)::bigint;                       
-
+    max_id_for_parent := calc_new_id( ((ch + 1) ^ (lv - (lvl - 1) - 1))::bigint,
+                                      (old_p_ch - 1)::integer,
+                                      parent_id::bigint);              
+                        
     -- (old_p_ch - 1) чтобы не выйти за диапазон допустимых значений bigint
     -- поэтому в следующем сравнении >= ..... (а не просто >, как было бы при old_p_ch)
 	
@@ -196,10 +197,9 @@ BEGIN
 		  USING parent_id;
 
 		-- Добавим в конец новую дырку
-		parent_holes := array_append(parent_holes,
-		                             (id / ((ch + 1) ^ (lv - (lvl - 1) - 1))::bigint
-                                    - parent_id / ((ch + 1) ^ (lv - (lvl - 1) - 1))::bigint)::integer);
-
+		parent_holes := array_append(parent_holes, ((id::numeric  - parent_id)
+                                        / ((ch + 1) ^ (lv - (lvl - 1) - 1))::bigint)::integer);
+                                        
 		-- Запишем новый массив дырок родителя и увеличим у него счетчик дырок
 		EXECUTE format('UPDATE %I SET removed_children = removed_children + 1, holes = $1 WHERE id = $2',
                        quote_ident(tn))
