@@ -13,6 +13,34 @@ WITH (
 ALTER TABLE tree_size
   OWNER TO postgres;
 
+CREATE OR REPLACE FUNCTION calc_new_id(
+    step bigint,
+    child integer,
+    parent bigint)
+  RETURNS bigint AS
+$BODY$DECLARE
+
+   c1  integer;
+   c2  integer;
+   r   bigint;
+   
+BEGIN
+       c1 := div(child, 2);
+       c2 := child - c1; 
+       IF (c1*2) = child THEN
+          c2 := c1;
+       END IF;        
+       r := step * c1 + parent;
+       r := step * c2 + r;
+       RETURN r;
+ 
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION calc_new_id(bigint, integer, bigint)
+  OWNER TO postgres;
+
 CREATE OR REPLACE FUNCTION const_ch(tn name)
   RETURNS integer AS
 'SELECT number_of_children FROM tree_size WHERE table_name = $1;'
@@ -83,11 +111,8 @@ BEGIN
       removed_child_no := parent_holes[new_p_rem];
 
       -- Новый элемент поставим на место "дырки"
-      new_id :=
-         (( ((ch + 1)^(lv - new_p_lv - 1))::bigint
-          * removed_child_no)
-          + parent)::bigint;
-
+      new_id := calc_new_id(((ch + 1)^(lv - new_p_lv - 1))::bigint, removed_child_no::integer, parent::bigint);
+         
       -- Удаляем дырку из массива родителя
       parent_holes := array_remove(parent_holes, removed_child_no);
 
@@ -101,10 +126,8 @@ BEGIN
    ELSIF new_p_ch < ch THEN                              
       -- Если количество детей еще не превышено
       -- Создаем новый элемент для родителя
-      new_id :=
-         (( ((ch + 1)^(lv - new_p_lv - 1))::bigint
-          * (new_p_ch + 1))
-          + parent)::bigint;
+      -- calc_new_id(шаг, номер_ребенка, родитель)
+      new_id := calc_new_id(((ch + 1)^(lv - new_p_lv - 1))::bigint, (new_p_ch + 1)::integer, parent::bigint);
           
       -- Увеличиваем счетчик детей у родителя
       EXECUTE format (
@@ -122,8 +145,8 @@ $BODY$
   COST 100;
 ALTER FUNCTION create_new_id(bigint, name)
   OWNER TO postgres;
-  
-  
+
+
 CREATE OR REPLACE FUNCTION delete_row(
     id bigint,
     lvl integer,
@@ -174,7 +197,7 @@ BEGIN
 
 		-- Добавим в конец новую дырку
 		parent_holes := array_append(parent_holes,
-		                            (id / ((ch + 1) ^ (lv - (lvl - 1) - 1))::bigint
+		                             (id / ((ch + 1) ^ (lv - (lvl - 1) - 1))::bigint
                                     - parent_id / ((ch + 1) ^ (lv - (lvl - 1) - 1))::bigint)::integer);
 
 		-- Запишем новый массив дырок родителя и увеличим у него счетчик дырок
@@ -199,6 +222,7 @@ $BODY$
   COST 100;
 ALTER FUNCTION delete_row(bigint, integer, integer, integer, bigint, name)
   OWNER TO postgres;
+
 
 
 -- 1
