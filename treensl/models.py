@@ -70,20 +70,10 @@ class TreeAbstract(models.Model):
             if (field.name not in list_fields) and (field.name != 'parent'):
                 list_fields.append(field.name)
                 list_values.append(0)
-
-        # Для 32 и 64 разрядных таблиц триггерные функции разные
-        #size_int = '64'
-        #if issubclass(self, Tree32Abstract):
-        #    size_int = '32'
-
-        #p5 = 'tree'+size_int+'_after_upd_parent()'
-        #p6 = 'tree'+size_int+'_before_del_row()'
-        #p7 = 'tree'+size_int+'_before_new_id()'
-        
+ 
         p5 = 'treensl_after_upd()'
         p6 = 'treensl_before_del()'
         p7 = 'treensl_before_new()'
-
 
         return POSTGRESQL_CONNECT_TABLE.format(self._meta.db_table,     #Название таблицы-наследника в БД
                                  ", ".join(list_fields,),
