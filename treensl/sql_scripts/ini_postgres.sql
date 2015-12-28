@@ -41,6 +41,37 @@ $BODY$
 ALTER FUNCTION calc_new_id(bigint, integer, bigint)
   OWNER TO postgres;
 
+CREATE OR REPLACE FUNCTION calc_number_ch(
+    ch bigint,
+    parent bigint,
+    step bigint)
+  RETURNS integer AS
+$BODY$DECLARE
+
+   p1  bigint;
+   p2  bigint;
+   c1  bigint;
+   c2  bigint;
+   
+BEGIN
+       IF ((parent>0) AND (ch>0)) OR ((parent<0) AND (ch<0)) THEN
+          RETURN div((ch - parent), step);
+       END IF;
+
+       p1 := div (parent, step);
+       p2 := parent - (p1*step);
+       c1 := div (ch, step);
+       c2 := ch - (c1*step);
+
+       RETURN c1 - p1 + div (c2-p2,step); 
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION calc_number_ch(bigint, bigint, bigint)
+  OWNER TO postgres;
+
+
 CREATE OR REPLACE FUNCTION const_ch(tn name)
   RETURNS integer AS
 'SELECT number_of_children FROM tree_size WHERE table_name = $1;'
@@ -197,9 +228,9 @@ BEGIN
 		  USING parent_id;
 
 		-- Добавим в конец новую дырку
-		parent_holes := array_append(parent_holes, ((id::numeric  - parent_id)
-                                        / ((ch + 1) ^ (lv - (lvl - 1) - 1))::bigint)::integer);
-                                        
+		parent_holes := array_append(parent_holes, calc_number_ch(id, parent_id,
+                                                          ((ch + 1) ^ (lv - (lvl - 1) - 1))::bigint));
+                                
 		-- Запишем новый массив дырок родителя и увеличим у него счетчик дырок
 		EXECUTE format('UPDATE %I SET removed_children = removed_children + 1, holes = $1 WHERE id = $2',
                        quote_ident(tn))
