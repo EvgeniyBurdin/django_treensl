@@ -7,8 +7,8 @@ class Group(Tree64Abstract):
     namenode = models.CharField(max_length=100, blank=True)
     
     LEVELS = 7
-    CHILDREN = 564
-    ROOT_ID = -9189865158000664063
+    CHILDREN = 563
+    ROOT_ID = -9223372036854775808
 
     @property
     def name_for_admin(self):
