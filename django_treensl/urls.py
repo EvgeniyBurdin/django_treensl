@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """django_treensl URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -17,5 +18,6 @@ from django.conf.urls import include, url
 from django.contrib import admin
 
 urlpatterns = [
+    url(r'^ads/', include('myapp.urls')),
     url(r'^admin/', include(admin.site.urls)),
 ]

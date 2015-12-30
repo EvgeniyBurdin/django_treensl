@@ -12,8 +12,19 @@ class Group(Tree64Abstract):
 
     @property
     def name_for_admin(self):
-        return '{0}{1} ({2}) '.format('- ' * self.lvl, self.namenode, self.count_children)
+        return '{0}{1} ({2}) '.format(' - ' * self.lvl, 
+                                      self.namenode, 
+                                      self.count_children)
 
     def __str__(self):
-        return '{0} (lvl={1})'.format(self.namenode, self.lvl)
+        return '{0} (L={1})'.format(self.namenode, self.lvl)
+    
+class Ads(models.Model):
+    parent = models.ForeignKey(Group)
+    header_ads = models.CharField(max_length=100, blank=False, null=False)
+    text_ads = models.CharField(max_length=200)
+    
+    def __str__(self):
+        return self.header_ads
+    
 

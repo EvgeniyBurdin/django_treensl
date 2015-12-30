@@ -1,0 +1,12 @@
+{% if a_list %}
+    <ul>
+    {% for ads in a_list %}
+         <hr />
+         <br /><b>{{ ads.header_ads }}</b>
+         <br />{{ ads.text_ads }}
+         <br /> <br />
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No ads are available.</p>
+{% endif %}
