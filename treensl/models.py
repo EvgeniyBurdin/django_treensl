@@ -83,14 +83,10 @@ class TreeAbstract(models.Model):
                                  p5, p6, p7)
 
 class Tree32Abstract(TreeAbstract):
-    # Некоторые сочетания уровень/дети для int32:
-    # 3/1624, 4/255, 5/83, 6/39, 7/23, 8/15
-    # Размерность дерева по умолчанию:
+  
     LEVELS = 5
     CHILDREN = 83
-
-    # id корня дерева 5/83
-    ROOT_ID = -2091059712
+    ROOT_ID = -2147483648
 
     id = models.IntegerField(primary_key=True)
     parent = models.ForeignKey('self')
@@ -99,16 +95,11 @@ class Tree32Abstract(TreeAbstract):
         abstract = True
 
 
-
 class Tree64Abstract(TreeAbstract):
-    # Некоторые сочетания уровень/дети для int64:
-    # 3/2642245, 4/65535, 5/7131, 6/1624, 7/564, 8/255, 9/137, 10/83
-    # Размерность дерева по умолчанию
-    LEVELS = 6
-    CHILDREN = 1624
 
-    # id корня дерева 6/1624
-    ROOT_ID = -9206407546997070313
+    LEVELS = 6
+    CHILDREN = 1623
+    ROOT_ID = -9223372036854775808
 
     id = models.BigIntegerField(primary_key=True)
     parent = models.ForeignKey('self')
