@@ -19,12 +19,12 @@ class Group(Tree64Abstract):
     def __str__(self):
         return '{0} (L={1})'.format(self.namenode, self.lvl)
     
-class Ads(models.Model):
+class SimpleAd(models.Model):
     parent = models.ForeignKey(Group)
-    header_ads = models.CharField(max_length=100, blank=False, null=False)
-    text_ads = models.CharField(max_length=200)
+    header_ad = models.CharField(max_length=100, blank=False, null=False)
+    text_ad = models.CharField(max_length=200)
     
     def __str__(self):
-        return self.header_ads
+        return self.header_ad
     
 

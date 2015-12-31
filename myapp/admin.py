@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
-from .models import Group, Ads
+from .models import Group, SimpleAd
 
 # настраиваем показ таблицы в адм. интерфейсе
 class GroupAdmin(admin.ModelAdmin):
@@ -12,11 +12,11 @@ class GroupAdmin(admin.ModelAdmin):
          {'fields': ['parent', 'namenode', ]}),
     ]
     
-class AdsAdmin(admin.ModelAdmin):
-    list_display = ('parent', 'header_ads', 'text_ads')
+class SimpleAdAdmin(admin.ModelAdmin):
+    list_display = ('parent', 'header_ad', 'text_ad')
 
 admin.site.register(Group, GroupAdmin)
-admin.site.register(Ads, AdsAdmin)
+admin.site.register(SimpleAd, SimpleAdAdmin)
 
 
 

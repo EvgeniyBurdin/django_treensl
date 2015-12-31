@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
 from django.db import migrations, models
@@ -25,6 +25,15 @@ class Migration(migrations.Migration):
             options={
                 'abstract': False,
             },
+        ),
+        migrations.CreateModel(
+            name='SimpleAd',
+            fields=[
+                ('id', models.AutoField(primary_key=True, auto_created=True, serialize=False, verbose_name='ID')),
+                ('header_ad', models.CharField(max_length=100)),
+                ('text_ad', models.CharField(max_length=200)),
+                ('parent', models.ForeignKey(to='myapp.Group')),
+            ],
         ),
         migrations.RunSQL(GroupModel.sql_end(GroupModel)), # add after makemigrations
     ]

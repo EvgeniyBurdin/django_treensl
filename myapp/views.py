@@ -2,11 +2,11 @@
 from django.http import HttpResponse
 from django.shortcuts import render
 
-from .models import Ads
+from .models import SimpleAd
 
 
 def ads_list(request):
-    a_list = Ads.objects.order_by('-id')
+    a_list = SimpleAd.objects.order_by('-id')
     context = {'a_list': a_list}
     return render(request, 'myapp/index.html', context)
     
