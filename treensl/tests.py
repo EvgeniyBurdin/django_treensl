@@ -19,9 +19,9 @@ class CalcValuesTests(TestCase):
 
     def test_parents_list(self):
         
-        #self.assertEqual(parents_list(80,4,4,2,0), [54,72,78])
-        #self.assertEqual(parents_list(70,4,4,2,0), [54,63,69])
-        #self.assertEqual(parents_list(67,4,4,2,0), [54,63,66])
+        self.assertEqual(parents_list(80,4,4,2,0), [54,72,78])
+        self.assertEqual(parents_list(70,4,4,2,0), [54,63,69])
+        self.assertEqual(parents_list(67,4,4,2,0), [54,63,66])
 
         self.assertEqual(parents_list(31,3,3,3,-32), [16,28])
         self.assertEqual(parents_list(5,3,3,3,-32), [0,4])
