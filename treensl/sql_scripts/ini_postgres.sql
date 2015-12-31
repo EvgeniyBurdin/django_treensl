@@ -380,7 +380,7 @@ BEGIN
        -- Коэф расфирения/сжатия переносимого поддерева
        -- x := ((ch + 1) ^ dlv)::bigint;
        -- 6 R_pow_int
-       x := pow_int((ch + 1), dlv)
+       x := pow_int((ch + 1), dlv);
 
        IF delta_lv < 0 THEN -- Переносим "вниз"
 
