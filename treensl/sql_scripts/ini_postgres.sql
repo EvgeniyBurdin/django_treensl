@@ -13,6 +13,45 @@ WITH (
 ALTER TABLE tree_size
   OWNER TO postgres;
 
+
+CREATE OR REPLACE FUNCTION pow_int(
+    x bigint,
+    y bigint)
+  RETURNS bigint AS
+$BODY$DECLARE
+
+r bigint;
+   
+BEGIN
+
+     IF y<0 THEN
+        RAISE EXCEPTION 'Отрицательная степень y=% в pow_int(x,y) - недопустима! Можно только положительные степени!',y;
+     END IF;
+     
+     IF y=0 THEN
+        RETURN 1;
+     END IF;
+
+     IF y=1 THEN
+        RETURN x;
+     END IF;
+
+     r := x;
+      
+     FOR i IN 1..(y-1) LOOP
+         r:= r * x;
+     END LOOP; 
+   
+     RETURN r;
+ 
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION pow_int(bigint, bigint)
+  OWNER TO postgres;
+
+
 CREATE OR REPLACE FUNCTION calc_new_id(
     step bigint,
     child integer,
@@ -41,8 +80,9 @@ $BODY$
 ALTER FUNCTION calc_new_id(bigint, integer, bigint)
   OWNER TO postgres;
 
+
 CREATE OR REPLACE FUNCTION calc_number_ch(
-    ch bigint,
+    child bigint,
     parent bigint,
     step bigint)
   RETURNS integer AS
@@ -54,16 +94,16 @@ $BODY$DECLARE
    c2  bigint;
    
 BEGIN
-       IF ((parent>0) AND (ch>0)) OR ((parent<0) AND (ch<0)) THEN
-          RETURN div((ch - parent), step);
+       IF ((parent>0) AND (child>0)) OR ((parent<0) AND (child<0)) THEN
+          RETURN div((child - parent), step);
        END IF;
 
-       p1 := div (parent, step);
+       p1 := div(parent, step);
        p2 := parent - (p1*step);
-       c1 := div (ch, step);
-       c2 := ch - (c1*step);
+       c1 := div(child, step);
+       c2 := child - (c1*step);
 
-       RETURN c1 - p1 + div (c2-p2,step); 
+       RETURN c1 - p1 + div(c2-p2,step); 
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
@@ -100,7 +140,7 @@ $BODY$
 DECLARE
    -- Размерность дерева:
    lv                 integer;
-   ch                 bigint;
+   ch                 integer;
 
    new_p_lv           integer; -- Уровень родителя
    new_p_ch           integer;  -- Количество детей у родителя
@@ -142,7 +182,9 @@ BEGIN
       removed_child_no := parent_holes[new_p_rem];
 
       -- Новый элемент поставим на место "дырки"
-      new_id := calc_new_id(((ch + 1)^(lv - new_p_lv - 1))::bigint, removed_child_no::integer, parent::bigint);
+      -- new_id := calc_new_id(((ch + 1)^(lv - new_p_lv - 1))::bigint, removed_child_no::integer, parent::bigint);
+      -- 1 R_pow_int
+      new_id := calc_new_id(pow_int((ch + 1),(lv - new_p_lv - 1)), removed_child_no::integer, parent::bigint);
          
       -- Удаляем дырку из массива родителя
       parent_holes := array_remove(parent_holes, removed_child_no);
@@ -158,7 +200,9 @@ BEGIN
       -- Если количество детей еще не превышено
       -- Создаем новый элемент для родителя
       -- calc_new_id(шаг, номер_ребенка, родитель)
-      new_id := calc_new_id(((ch + 1)^(lv - new_p_lv - 1))::bigint, (new_p_ch + 1)::integer, parent::bigint);
+      -- new_id := calc_new_id(((ch + 1)^(lv - new_p_lv - 1))::bigint, (new_p_ch + 1)::integer, parent::bigint);
+      -- 2 R_pow_int
+      new_id := calc_new_id(pow_int((ch + 1),(lv - new_p_lv - 1)), (new_p_ch + 1)::integer, parent::bigint);
           
       -- Увеличиваем счетчик детей у родителя
       EXECUTE format (
@@ -193,7 +237,7 @@ DECLARE
    ch                 integer;
    
    old_p_ch  integer;          -- Количество детей у старого родителя
-   max_id_for_parent  bigint; -- Самый "правый", т.е. больший существующий прямой ребенок у родителя
+   max_id_for_parent  bigint;  -- Самый "правый", т.е. больший существующий прямой ребенок у родителя
    parent_holes integer[];     -- Массив дырок родителя
 
 BEGIN
@@ -211,9 +255,13 @@ BEGIN
 	-- Найдем максимально правого существующего ребенка у родителя
 	-- (здесь и далее "(lvl - 1)" - уровень родителя)
 	
-    max_id_for_parent := calc_new_id( ((ch + 1) ^ (lv - (lvl - 1) - 1))::bigint,
+    -- max_id_for_parent := calc_new_id( ((ch + 1) ^ (lv - (lvl - 1) - 1))::bigint,
+    --                                  (old_p_ch - 1)::integer,
+    --                                  parent_id::bigint); 
+    -- 3 R_pow_int
+    max_id_for_parent := calc_new_id(pow_int((ch + 1),(lv - (lvl - 1) - 1)),
                                       (old_p_ch - 1)::integer,
-                                      parent_id::bigint);              
+                                      parent_id::bigint);   
                         
     -- (old_p_ch - 1) чтобы не выйти за диапазон допустимых значений bigint
     -- поэтому в следующем сравнении >= ..... (а не просто >, как было бы при old_p_ch)
@@ -228,8 +276,12 @@ BEGIN
 		  USING parent_id;
 
 		-- Добавим в конец новую дырку
-		parent_holes := array_append(parent_holes, calc_number_ch(id, parent_id,
-                                                          ((ch + 1) ^ (lv - (lvl - 1) - 1))::bigint));
+		-- parent_holes := array_append(parent_holes, calc_number_ch(id, parent_id,
+        --                                 ((ch + 1)^(lv - (lvl - 1) - 1))::bigint));
+        -- 4 R_pow_int
+        parent_holes := array_append(parent_holes, calc_number_ch(id, parent_id,
+                                    pow_int((ch + 1),(lv - (lvl - 1) - 1))));
+        
                                 
 		-- Запишем новый массив дырок родителя и увеличим у него счетчик дырок
 		EXECUTE format('UPDATE %I SET removed_children = removed_children + 1, holes = $1 WHERE id = $2',
@@ -283,7 +335,7 @@ BEGIN
     -- Для переноса надо изменить родителя (parent_id)
     IF (NEW.id = OLD.id) AND (NEW.parent_id != OLD.parent_id) THEN -- имеем перенос
        IF NEW.id = NEW.parent_id THEN
-	  RAISE EXCEPTION 'Перенос id = % к самому себе невозможен!', NEW.id;
+	      RAISE EXCEPTION 'Перенос id = % к самому себе невозможен!', NEW.id;
        END IF;
 
        -- Имеем перенос к другому родителю
@@ -305,8 +357,11 @@ BEGIN
        -- Так как переносим элемент и всех его детей
        -- то найдем правую границу диапазона всех этих элементов
        id_dep := OLD.id;
-       limit_right := id_dep - 1 + ((ch + 1) ^ (lv - (OLD.lvl - 1) - 1))::bigint;
-
+       -- limit_right := id_dep - 1 + ((ch + 1) ^ (lv - (OLD.lvl - 1) - 1))::bigint;
+       -- 5 R_pow_int
+       limit_right := id_dep - 1 + pow_int((ch + 1), (lv - (OLD.lvl - 1) - 1));
+       
+       
        -- Найдем максимальное значения поля lvl для продгруппы переноса
        EXECUTE 'SELECT max(lvl) FROM '
 	       || quote_ident(TG_TABLE_NAME)
@@ -323,7 +378,9 @@ BEGIN
 	       USING id_dest, delta_lv, NEW.parent_id, id_dep;
 
        -- Коэф расфирения/сжатия переносимого поддерева
-       x := ((ch + 1) ^ dlv)::bigint;
+       -- x := ((ch + 1) ^ dlv)::bigint;
+       -- 6 R_pow_int
+       x := pow_int((ch + 1), dlv)
 
        IF delta_lv < 0 THEN -- Переносим "вниз"
 
@@ -385,4 +442,3 @@ $BODY$
   COST 100;
 ALTER FUNCTION treensl_before_new()
   OWNER TO postgres;
-
