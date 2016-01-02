@@ -1,12 +1,14 @@
-{% if a_list %}
-    <ul>
-    {% for ads in a_list %}
+{% if ads_l %}
+    {% for ad in ads_l %}
          <hr />
-         <br /><b>{{ ads.header_ad }}</b>
-         <br />{{ ads.text_ad }}
+         <a href="/ads/">Объявления </a>
+         {% for p in ad.parents_list %}
+            => <a href="/ads/{{ p }}/"> {{ p }}</a>
+         {% endfor %}
+         <br /><b>{{ ad.header_ad }}</b>
+         <br />{{ ad.text_ad }}
          <br /> <br />
     {% endfor %}
-    </ul>
 {% else %}
     <p>No ads are available.</p>
 {% endif %}
