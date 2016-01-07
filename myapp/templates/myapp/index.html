@@ -3,7 +3,7 @@
          <hr />
          <a href="/ads/">Объявления </a>
          {% for p in ad.parents_list %}
-            => <a href="/ads/{{ p }}/"> {{ p }}</a>
+              >> <a href="/ads/{{ p }}/"> {{ p }}</a>
          {% endfor %}
          <br /><b>{{ ad.header_ad }}</b>
          <br />{{ ad.text_ad }}

@@ -38,7 +38,7 @@ CREATE TRIGGER before_new
 
 
 class TreeAbstract(models.Model):
-    
+
     lvl = models.IntegerField(blank=False, null=False)
     created_children = models.IntegerField(blank=False, null=False)
     removed_children = models.IntegerField(blank=False, null=False)
@@ -54,15 +54,19 @@ class TreeAbstract(models.Model):
     def sql_end(self):
 
         # В определении модели, поле 'parent_id',названо как 'parent'
-        # Но, так как это поле ссылка на 'id', Django в БД его пишет как 'parent_id'
-        # Создадим списки полей абстрактой модели и их значений для первой строки (1-й элемент)
+        # Но, так как это поле ссылка на 'id', Django в БД его пишет
+        # ...как 'parent_id'
+        # Создадим списки полей абстрактой модели и их значений для первой
+        # ...строки (1-й элемент)
         # (1-й элемент в таблице, хранящей дерево, ссылается сам на себя)
         list_fields = ['id', 'parent_id', 'lvl', 'created_children',
                        'removed_children']
-                    #'removed_children', 'label_node']
+
         #list_values = [self.ROOT_ID, self.ROOT_ID, 0, 0, 0,'root']
         list_values = [self.ROOT_ID, self.ROOT_ID, 0, 0, 0]
-        # Наследник модели может иметь свои дополнительные поля, и они могут быть NOT NULL
+
+        # Наследник модели может иметь свои дополнительные поля,
+        # ...и они могут быть NOT NULL
         # Необходимо вставить начальный элемент дерева, с учетом этого
         # То есть, заполнить такие поля каким-либо значением
         # (0 - подходит для полей всех типов в Postgres... вроде бы)
@@ -70,27 +74,29 @@ class TreeAbstract(models.Model):
             if (field.name not in list_fields) and (field.name != 'parent'):
                 list_fields.append(field.name)
                 list_values.append(0)
- 
+
         p5 = 'treensl_after_upd()'
         p6 = 'treensl_before_del()'
         p7 = 'treensl_before_new()'
 
-        return POSTGRESQL_CONNECT_TABLE.format(self._meta.db_table,     #Название таблицы-наследника в БД
-                                 ", ".join(list_fields,),
-                                 tuple(list_values),
-                                 self.LEVELS,
-                                 self.CHILDREN,
-                                 p5, p6, p7)
+        return POSTGRESQL_CONNECT_TABLE.format(self._meta.db_table,
+                                               ", ".join(list_fields,),
+                                               tuple(list_values),
+                                               self.LEVELS,
+                                               self.CHILDREN,
+                                               p5, p6, p7
+                                               )
+
 
 class Tree32Abstract(TreeAbstract):
-  
+
     LEVELS = 5
     CHILDREN = 83
     ROOT_ID = -2147483648
 
     id = models.IntegerField(primary_key=True)
     parent = models.ForeignKey('self')
-    
+
     class Meta:
         abstract = True
 
@@ -103,6 +109,6 @@ class Tree64Abstract(TreeAbstract):
 
     id = models.BigIntegerField(primary_key=True)
     parent = models.ForeignKey('self')
-    
+
     class Meta:
         abstract = True
