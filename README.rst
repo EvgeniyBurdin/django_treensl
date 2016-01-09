@@ -29,7 +29,7 @@ Works only with PostgreSQL 9.1 and later!
 Installation
 ============
 
-Clone `this`_ repository.
+Clone `this`_ repository. Here is an example of a project (app ``myapp`` use ``treensl``)
 
 .. _this: https://github.com/EvgeniyBurdin/django_treensl
 
@@ -54,3 +54,11 @@ or:
 
 
 Run ``python manage.py migrate``
+
+
+Possible dimensions of the tree
+===============================
+
+Before executing the ``migrate`` you can adjust the settings tree. The dimension of the tree depends on the length ``integer``.
+
+Recommended values (in the format ``LEVELS/CHILDREN``):
