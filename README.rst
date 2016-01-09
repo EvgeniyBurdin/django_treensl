@@ -60,9 +60,9 @@ Possible dimensions of the tree
 
 Recommended values (in the format ``LEVELS/CHILDREN/ROOT_ID``):
 
-1. For ``int32``: ``3/1623/-2147483648``, ``4/255/-2147483648``, ``5/83/-2147483648``, ``6/39/-2147483648``
+1. For **int32**: ``3/1623/-2147483648``, ``4/255/-2147483648``, ``5/83/-2147483648``, ``6/39/-2147483648``
 
-2. For ``int64``: ``3/2642243/-9223372036854775808``, ``4/65535/-9223372036854775808``, ``5/7129/-9223372036854775808``, ``6/1623/-9223372036854775808``, ``7/563/-9223372036854775808``, ``8/255/-9223372036854775808``, ``9/137/-9223372036854775808``, ``10/83/-9223372036854775808``
+2. For **int64**: ``3/2642243/-9223372036854775808``, ``4/65535/-9223372036854775808``, ``5/7129/-9223372036854775808``, ``6/1623/-9223372036854775808``, ``7/563/-9223372036854775808``, ``8/255/-9223372036854775808``, ``9/137/-9223372036854775808``, ``10/83/-9223372036854775808``
 
 
 Start usage
@@ -73,10 +73,10 @@ Run ``python manage.py migrate``
 
 You can get a list of the parents and the range of children without a database query.
 
-For the ``id_e`` function call from the `treensl.calc_values`_:
+For any ``id_e`` call functions from the `treensl.calc_values`_:
 
-1. parents_list(id_e, LEVELS, CHILDREN, ROOT_ID)
+1. ``parents_list(id_e, LEVELS, CHILDREN, ROOT_ID)`` - returns a list of the first to the last parent
 
-2. children_range(id_e, LEVELS, CHILDREN, ROOT_ID)
+2. ``children_range(id_e, LEVELS, CHILDREN, ROOT_ID)``- returns a list of the range of children
 
 .. _treensl.calc_values: https://github.com/EvgeniyBurdin/django_treensl/blob/master/treensl/calc_values.py
