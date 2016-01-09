@@ -4,6 +4,8 @@ django-treensl
 
 Django application to the tree structure in the model.
 
+You can get a list of the parents and the range of children without a database query.
+
 Description of the algorithm for constructing the tree can be found  `habr.ru`_ or in the `wiki`_ (in Russian)
 
 .. _habr.ru: http://habrahabr.ru/post/166699/
