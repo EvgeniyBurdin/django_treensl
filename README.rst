@@ -2,10 +2,10 @@
 django-treensl
 ==================
 
-Django model for Tree.
+Django application to the tree structure in the model.
 
 ``django-treensl`` supports `Django`_ 1.8 and later on Python 2.7,
-3.2 - 3.5. Works with PostgreSQL 9.1 and later.
+3.2 - 3.5. Works only with PostgreSQL 9.1 and later.
 
 .. _Django: http://www.djangoproject.com/
 

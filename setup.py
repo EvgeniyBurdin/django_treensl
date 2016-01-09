@@ -14,7 +14,7 @@ setup(
     packages=['treensl', 'treensl.migrations'],
     include_package_data=True,
     license='BSD License',
-    description='Django app to tree in DB.',
+    description='Django application to the tree structure in the model.',
     long_description=README,
     url='https://github.com/EvgeniyBurdin/django_treensl',
     author='Evgeniy Burdin',
