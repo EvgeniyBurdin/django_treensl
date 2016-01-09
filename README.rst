@@ -59,6 +59,10 @@ Run ``python manage.py migrate``
 Possible dimensions of the tree
 ===============================
 
-Before executing the ``migrate`` you can adjust the settings tree. The dimension of the tree depends on the length ``integer``.
+**Before** executing the ``migrate`` you can adjust the settings tree. The dimension of the tree depends on the length ``integer``.
 
-Recommended values (in the format ``LEVELS/CHILDREN``):
+Recommended values (in the format ``LEVELS/CHILDREN/ROOT_ID``):
+
+1. For ``int32``: ``3/1623/-2147483648``, ``4/255/-2147483648``, ``5/83/-2147483648``, ``6/39/-2147483648``
+
+2. For ``int64``: ``3/2642243/-9223372036854775808``, ``4/65535/-9223372036854775808``, ``5/7129/-9223372036854775808``, ``6/1623/-9223372036854775808``, ``7/563/-9223372036854775808``, ``8/255/-9223372036854775808``, ``9/137/-9223372036854775808``, ``10/83/-9223372036854775808``
