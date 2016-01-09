@@ -18,7 +18,7 @@ This app is available on `PyPI`_.
 Requirements
 ============
 
-``django-treensl`` supports `Django`_ 1.8 and later on Python 2.7,
+Supports `Django`_ 1.8 and later on Python 2.7,
 3.2 - 3.5.
 
 Works only with PostgreSQL 9.1 and later!
@@ -42,7 +42,7 @@ or:
 
 2. Add app ``treensl`` in ``settings.py``
 
-3. Create a new class of models from ``Tree32Abstract`` or ``Tree64Abstract`` (from ``treensl.models``). Add your field in the model. If necessary, change the dimension of the default tree (properties ``LEVELS`` and ``CHILDREN``). For example see `myapp/models.py`_
+3. Create a new class of models from ``Tree32Abstract`` or ``Tree64Abstract`` (from ``treensl.models``). Add your field in the model (for their fields, **do not use** the following names: ``id``, ``parent_id``, ``lvl``, ``created_children``, ``removed_children``, ``holes``). If necessary, change the dimension of the default tree (properties ``LEVELS`` and ``CHILDREN``). For example see `myapp/models.py`_
 
 4. Run ``python manage.py makemigrations``
 
