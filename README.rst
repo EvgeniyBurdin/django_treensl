@@ -22,7 +22,7 @@ Requirements
 ``django-treensl`` supports `Django`_ 1.8 and later on Python 2.7,
 3.2 - 3.5.
 
-**Works only with PostgreSQL 9.1 and later!**
+Works only with PostgreSQL 9.1 and later!
 
 .. _Django: http://www.djangoproject.com/
 
@@ -53,4 +53,4 @@ or:
 
 .. _myapp/migrations/0001_initial.py: https://github.com/EvgeniyBurdin/django_treensl/blob/master/myapp/migrations/0001_initial.py
 
-6. Run ``python manage.py migrate``
+Run ``python manage.py migrate``
