@@ -4,6 +4,7 @@ django-treensl
 
 Django application to the tree structure in the model.
 
+
 ``django-treensl`` supports `Django`_ 1.8 and later on Python 2.7,
 3.2 - 3.5.
 
@@ -11,9 +12,18 @@ Django application to the tree structure in the model.
 
 .. _Django: http://www.djangoproject.com/
 
+
 This app is available on `PyPI`_.
 
 .. _PyPI: https://pypi.python.org/pypi/django-treensl/
+
+
+Description of the algorithm for constructing the tree can be found  `habr.ru`_ or in the `wiki`_ (in Russian)
+
+.. _habr.ru: http://habrahabr.ru/post/166699/
+
+.. _wiki: https://github.com/EvgeniyBurdin/django_treensl/wiki
+
 
 
 Installation
