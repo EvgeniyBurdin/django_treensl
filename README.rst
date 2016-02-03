@@ -31,7 +31,7 @@ Works only with PostgreSQL 9.1 and later!
 Installation
 ============
 
-Clone `this`_ repository. Here is an example of a project (app ``myapp`` use ``treensl``)
+Clone `this`_ repository. The is an example of a project (app ``myapp`` use ``treensl``)
 
 .. _this: https://github.com/EvgeniyBurdin/django_treensl
 
