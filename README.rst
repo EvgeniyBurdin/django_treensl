@@ -72,6 +72,7 @@ Start usage
 
 Run ``python manage.py migrate``
 
+Now, to create a new item in the tree need only choose a parent. The key (id) for the new item will be calculated automatically.
 
 You can get a list of the parents and the range of children without a database query.
 
