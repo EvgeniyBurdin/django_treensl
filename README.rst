@@ -2,9 +2,12 @@
 django-treensl
 ==================
 
-Django application to the tree structure in the model.
+Django application for creating the tree structure in the model (very fast structure).
 
+To create a new item in the tree need only choose a parent. The key (id) for the new item will be calculated automatically.
 You can get a list of the parents and the range of children without a database query.
+
+Implemented to create a new item, delete the item, transfer item to the other parent (and the transfer of the group).
 
 Description of the algorithm for constructing the tree can be found  `habr.ru`_ or in the `wiki`_ (in Russian)
 
