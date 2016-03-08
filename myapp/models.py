@@ -12,6 +12,10 @@ class Group(Tree64Abstract):
     ROOT_ID = -9223372036854775808
 
     @property
+    def count_children(self):
+        return self.created_children - self.removed_children
+
+    @property
     def name_for_admin(self):
         return '{0}{1} ({2}) '.format(' - ' * self.lvl,
                                       self.namenode,

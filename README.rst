@@ -79,10 +79,13 @@ Now, to create a new item in the tree need only choose a parent. The key (id) fo
 
 You can get a list of the parents and the range of children without a database query.
 
-For any ``id_e`` call functions from the `treensl.calc_values`_:
+For any ``id`` call functions from the `treensl.calc_values`_:
 
-1. ``parents_list(id_e, LEVELS, CHILDREN, ROOT_ID)`` - returns a list of the first to the last parent
+1. ``parents_list(id, LEVELS, CHILDREN, ROOT_ID)`` - returns a list of the first to the last parent
 
-2. ``children_range(id_e, LEVELS, CHILDREN, ROOT_ID)``- returns a list of the range of children
+2. ``children_range(id, LEVELS, CHILDREN, ROOT_ID)``- returns a list of the range of children
+
+``LEVELS``, ``CHILDREN``, ``ROOT_ID`` - settings current tree
+
 
 .. _treensl.calc_values: https://github.com/EvgeniyBurdin/django_treensl/blob/master/treensl/calc_values.py
