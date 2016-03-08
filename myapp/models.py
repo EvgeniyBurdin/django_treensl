@@ -22,7 +22,9 @@ class Group(Tree64Abstract):
                                       self.count_children)
 
     def __str__(self):
-        return '{0} (L={1})'.format(self.namenode, self.lvl)
+        if self.lvl:
+            return self.name_for_admin
+        return self.namenode
 
 
 class SimpleAd(models.Model):
