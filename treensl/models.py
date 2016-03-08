@@ -43,10 +43,8 @@ class TreeAbstract(models.Model):
     created_children = models.IntegerField(blank=True, null=False)
     removed_children = models.IntegerField(blank=True, null=False)
 
-    # Количество детей
-    @property
-    def count_children(self):
-        return self.created_children - self.removed_children
+    # Актуальное количество детей можно получить так:
+    # self.created_children - self.removed_children
 
     class Meta:
         abstract = True
