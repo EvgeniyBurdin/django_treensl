@@ -10,8 +10,8 @@ CREATE TABLE tree_size
 WITH (
   OIDS=FALSE
 );
-ALTER TABLE tree_size
-  OWNER TO postgres;
+-- ALTER TABLE tree_size
+--  OWNER TO postgres;
 
 
 CREATE OR REPLACE FUNCTION pow_int(
@@ -21,13 +21,13 @@ CREATE OR REPLACE FUNCTION pow_int(
 $BODY$DECLARE
 
 r bigint;
-   
+
 BEGIN
 
      IF y<0 THEN
         RAISE EXCEPTION 'Отрицательная степень y=% в pow_int(x,y) - недопустима! Можно только положительные степени!',y;
      END IF;
-     
+
      IF y=0 THEN
         RETURN 1;
      END IF;
@@ -37,19 +37,19 @@ BEGIN
      END IF;
 
      r := x;
-      
+
      FOR i IN 1..(y-1) LOOP
          r:= r * x;
-     END LOOP; 
-   
+     END LOOP;
+
      RETURN r;
- 
+
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION pow_int(bigint, bigint)
-  OWNER TO postgres;
+-- ALTER FUNCTION pow_int(bigint, bigint)
+--  OWNER TO postgres;
 
 
 CREATE OR REPLACE FUNCTION calc_new_id(
@@ -62,23 +62,23 @@ $BODY$DECLARE
    c1  integer;
    c2  integer;
    r   bigint;
-   
+
 BEGIN
        c1 := div(child, 2);
-       c2 := child - c1; 
+       c2 := child - c1;
        IF (c1*2) = child THEN
           c2 := c1;
-       END IF;        
+       END IF;
        r := step * c1 + parent;
        r := step * c2 + r;
        RETURN r;
- 
+
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION calc_new_id(bigint, integer, bigint)
-  OWNER TO postgres;
+-- ALTER FUNCTION calc_new_id(bigint, integer, bigint)
+--  OWNER TO postgres;
 
 
 CREATE OR REPLACE FUNCTION calc_number_ch(
@@ -92,7 +92,7 @@ $BODY$DECLARE
    p2  bigint;
    c1  bigint;
    c2  bigint;
-   
+
 BEGIN
        IF ((parent>0) AND (child>0)) OR ((parent<0) AND (child<0)) THEN
           RETURN div((child - parent), step);
@@ -103,13 +103,13 @@ BEGIN
        c1 := div(child, step);
        c2 := child - (c1*step);
 
-       RETURN c1 - p1 + div(c2-p2,step); 
+       RETURN c1 - p1 + div(c2-p2,step);
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION calc_number_ch(bigint, bigint, bigint)
-  OWNER TO postgres;
+-- ALTER FUNCTION calc_number_ch(bigint, bigint, bigint)
+--  OWNER TO postgres;
 
 
 CREATE OR REPLACE FUNCTION const_ch(tn name)
@@ -117,8 +117,8 @@ CREATE OR REPLACE FUNCTION const_ch(tn name)
 'SELECT number_of_children FROM tree_size WHERE table_name = $1;'
   LANGUAGE sql IMMUTABLE
   COST 100;
-ALTER FUNCTION const_ch(name)
-  OWNER TO postgres;
+-- ALTER FUNCTION const_ch(name)
+--  OWNER TO postgres;
 
 
 CREATE OR REPLACE FUNCTION const_lv(tn name)
@@ -126,8 +126,8 @@ CREATE OR REPLACE FUNCTION const_lv(tn name)
 'SELECT number_of_levels FROM tree_size WHERE table_name = $1;'
   LANGUAGE sql IMMUTABLE
   COST 100;
-ALTER FUNCTION const_lv(name)
-  OWNER TO postgres;
+-- ALTER FUNCTION const_lv(name)
+--  OWNER TO postgres;
 
 
 CREATE OR REPLACE FUNCTION create_new_id(
@@ -168,7 +168,7 @@ BEGIN
        RAISE EXCEPTION 'Элементу с id=% нельзя иметь детей - его уровень % максимально возможный!', parent, lv;
    END IF;
 
-   IF new_p_rem > 0 THEN                          
+   IF new_p_rem > 0 THEN
       -- Если есть дырки
       -- Возьмем дырки родителя
       EXECUTE
@@ -185,7 +185,7 @@ BEGIN
       -- new_id := calc_new_id(((ch + 1)^(lv - new_p_lv - 1))::bigint, removed_child_no::integer, parent::bigint);
       -- 1 R_pow_int
       new_id := calc_new_id(pow_int((ch + 1),(lv - new_p_lv - 1)), removed_child_no::integer, parent::bigint);
-         
+
       -- Удаляем дырку из массива родителя
       parent_holes := array_remove(parent_holes, removed_child_no);
 
@@ -194,16 +194,16 @@ BEGIN
          'UPDATE %I SET removed_children = removed_children - 1, holes = $1 WHERE id = $2',
          quote_ident (tn))
          USING parent_holes, parent;
-      
+
    -- Может ли родитель еше иметь детей?
-   ELSIF new_p_ch < ch THEN                              
+   ELSIF new_p_ch < ch THEN
       -- Если количество детей еще не превышено
       -- Создаем новый элемент для родителя
       -- calc_new_id(шаг, номер_ребенка, родитель)
       -- new_id := calc_new_id(((ch + 1)^(lv - new_p_lv - 1))::bigint, (new_p_ch + 1)::integer, parent::bigint);
       -- 2 R_pow_int
       new_id := calc_new_id(pow_int((ch + 1),(lv - new_p_lv - 1)), (new_p_ch + 1)::integer, parent::bigint);
-          
+
       -- Увеличиваем счетчик детей у родителя
       EXECUTE format (
          'UPDATE %I SET created_children = created_children + 1 WHERE id = $1',
@@ -212,14 +212,14 @@ BEGIN
    ELSE
       RAISE EXCEPTION 'Родителю c id=% более нельзя иметь детей - их количество уже %!', parent, ch;
    END IF;
-    
+
    new_lv := new_p_lv +1;
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION create_new_id(bigint, name)
-  OWNER TO postgres;
+-- ALTER FUNCTION create_new_id(bigint, name)
+--  OWNER TO postgres;
 
 
 CREATE OR REPLACE FUNCTION delete_row(
@@ -235,7 +235,7 @@ DECLARE
    -- Размерность дерева:
    lv                 integer;
    ch                 integer;
-   
+
    old_p_ch  integer;          -- Количество детей у старого родителя
    max_id_for_parent  bigint;  -- Самый "правый", т.е. больший существующий прямой ребенок у родителя
    parent_holes integer[];     -- Массив дырок родителя
@@ -254,18 +254,18 @@ BEGIN
 
 	-- Найдем максимально правого существующего ребенка у родителя
 	-- (здесь и далее "(lvl - 1)" - уровень родителя)
-	
+
     -- max_id_for_parent := calc_new_id( ((ch + 1) ^ (lv - (lvl - 1) - 1))::bigint,
     --                                  (old_p_ch - 1)::integer,
-    --                                  parent_id::bigint); 
+    --                                  parent_id::bigint);
     -- 3 R_pow_int
     max_id_for_parent := calc_new_id(pow_int((ch + 1),(lv - (lvl - 1) - 1)),
                                       (old_p_ch - 1)::integer,
-                                      parent_id::bigint);   
-                        
+                                      parent_id::bigint);
+
     -- (old_p_ch - 1) чтобы не выйти за диапазон допустимых значений bigint
     -- поэтому в следующем сравнении >= ..... (а не просто >, как было бы при old_p_ch)
-	
+
     IF max_id_for_parent >= id THEN -- имеем "дырку"
 
 		-- Возьмем массив дырок родителя
@@ -281,8 +281,8 @@ BEGIN
         -- 4 R_pow_int
         parent_holes := array_append(parent_holes, calc_number_ch(id, parent_id,
                                     pow_int((ch + 1),(lv - (lvl - 1) - 1))));
-        
-                                
+
+
 		-- Запишем новый массив дырок родителя и увеличим у него счетчик дырок
 		EXECUTE format('UPDATE %I SET removed_children = removed_children + 1, holes = $1 WHERE id = $2',
                        quote_ident(tn))
@@ -298,13 +298,13 @@ BEGIN
 	END IF;
 
 	RETURN 0;
- 
+
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION delete_row(bigint, integer, integer, integer, bigint, name)
-  OWNER TO postgres;
+-- ALTER FUNCTION delete_row(bigint, integer, integer, integer, bigint, name)
+--  OWNER TO postgres;
 
 
 
@@ -328,7 +328,7 @@ $BODY$DECLARE
 	x  bigint; -- Коэф "сжатия/расширения" переносимого поддерева головного эдемента
 
     new_rec  record;
-    
+
 
 BEGIN
     -- В клиентах id не изменяются (и менять их руками нельзя так как порушится дерево)
@@ -347,9 +347,9 @@ BEGIN
 
        new_rec := create_new_id(NEW.parent_id, TG_TABLE_NAME);
        id_dest := new_rec.new_id;
-        
+
        PERFORM delete_row(OLD.id, OLD.lvl, OLD.created_children, OLD.removed_children, OLD.parent_id, TG_TABLE_NAME);
-       
+
        delta_lv := (OLD.lvl - 1) - (new_rec.new_lv-1);
 
        dlv := @delta_lv;-- модуль
@@ -360,8 +360,8 @@ BEGIN
        -- limit_right := id_dep - 1 + ((ch + 1) ^ (lv - (OLD.lvl - 1) - 1))::bigint;
        -- 5 R_pow_int
        limit_right := id_dep - 1 + pow_int((ch + 1), (lv - (OLD.lvl - 1) - 1));
-       
-       
+
+
        -- Найдем максимальное значения поля lvl для продгруппы переноса
        EXECUTE 'SELECT max(lvl) FROM '
 	       || quote_ident(TG_TABLE_NAME)
@@ -400,15 +400,15 @@ BEGIN
 END;$BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION treensl_after_upd()
-  OWNER TO postgres;
+-- ALTER FUNCTION treensl_after_upd()
+--  OWNER TO postgres;
 
 -- 2
 CREATE OR REPLACE FUNCTION treensl_before_del()
   RETURNS trigger AS
 $BODY$BEGIN
    IF (OLD.created_children - OLD.removed_children)  > 0 THEN
-		RAISE EXCEPTION 'У данного элемента имеются дети в количестве % шт. Удалите сначала их.', 
+		RAISE EXCEPTION 'У данного элемента имеются дети в количестве % шт. Удалите сначала их.',
         (OLD.created_children - OLD.removed_children);
    END IF;
    PERFORM delete_row(OLD.id, OLD.lvl, OLD.created_children, OLD.removed_children, OLD.parent_id, TG_TABLE_NAME);
@@ -416,8 +416,8 @@ $BODY$BEGIN
 END$BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION treensl_before_del()
-  OWNER TO postgres;
+-- ALTER FUNCTION treensl_before_del()
+--  OWNER TO postgres;
 
 
 -- 3
@@ -425,10 +425,10 @@ CREATE OR REPLACE FUNCTION treensl_before_new()
   RETURNS trigger AS
 $BODY$
 DECLARE
-    r record; 
+    r record;
 
 BEGIN
-   
+
    r := create_new_id(NEW.parent_id, TG_TABLE_NAME);
    NEW.id := r.new_id;
    NEW.lvl := r.new_lv;
@@ -440,5 +440,5 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION treensl_before_new()
-  OWNER TO postgres;
+-- ALTER FUNCTION treensl_before_new()
+--  OWNER TO postgres;
