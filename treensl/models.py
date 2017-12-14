@@ -99,7 +99,7 @@ class Tree32Abstract(TreeAbstract):
     ROOT_ID = -2147483648
 
     id = models.IntegerField(primary_key=True)
-    parent = models.ForeignKey('self')
+    parent = models.ForeignKey('self', on_delete=models.CASCADE,)
 
     class Meta:
         abstract = True
@@ -117,7 +117,7 @@ class Tree64Abstract(TreeAbstract):
     ROOT_ID = -9223372036854775808
 
     id = models.BigIntegerField(primary_key=True)
-    parent = models.ForeignKey('self')
+    parent = models.ForeignKey('self', on_delete=models.CASCADE,)
 
     class Meta:
         abstract = True
